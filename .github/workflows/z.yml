@@ -13,7 +13,7 @@ jobs:
       outputZ: ${{ steps.step2.outputs.matrix }}
     steps:
       - run: |
-          echo "matrix=[01, 02, 03, 04, 05, 06, 07, 08]" >> $GITHUB_ENV
+          echo "matrix=[01,02,03,04,05,06,07,08]" >> $GITHUB_ENV
       - id: step1
         run: echo "::set-output name=test::hello"
       - id: step2
