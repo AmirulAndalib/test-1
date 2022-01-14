@@ -12,14 +12,14 @@ jobs:
       output2: ${{ steps.step2.outputs.test }}
       outputZ: ${{ steps.step2.outputs.matrix }}
     steps:
-      - run: |
-          echo "matrix=[01,02,03,04,05,06,07,08]" >> $GITHUB_ENV
       - id: step1
         run: echo "::set-output name=test::hello"
       - id: step2
         run: echo "::set-output name=test::world"
       - id: step3
-        run: echo "::set-output name=matrix::${matrix}"
+        run: |
+          export load_matrix='["01","02","03","04","05","06","07","08"]'
+          echo "::set-output name=matrix::${load_matrix}"
   job2:
     runs-on: ubuntu-latest
     needs: job1
