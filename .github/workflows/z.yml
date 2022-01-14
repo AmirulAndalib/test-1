@@ -1,6 +1,8 @@
 name: test
 
 on:
+  push:
+    paths: .github/workflows/z.yml
   workflow_dispatch:
 
 jobs:
@@ -24,7 +26,7 @@ jobs:
             printf "\"%s\"," "${i}"
           done)
           set -x
-          export matrix=''"'[${input_matrix%,*}]'"''
+          export matrix=[${input_matrix%,*}]
           echo ${matrix}
           echo "::set-output name=matrix1::${matrix}"
           echo ${{ steps.set-matrix.outputs.matrix }}
