@@ -13,7 +13,7 @@ jobs:
       outputZ: ${{ steps.step2.outputs.matrix }}
     steps:
       - run: |
-          echo "matrix=01,02,03,04,05,06,07,08" >> $GITHUB_ENV
+          echo "matrix=[01,02,03,04,05,06,07,08]" >> $GITHUB_ENV
       - id: step1
         run: echo "::set-output name=test::hello"
       - id: step2
@@ -27,7 +27,7 @@ jobs:
       fail-fast: true
       max-parallel: 4
       matrix:
-        partnum: ${{ needs.job1.outputs.matrix }}
+        partnum: ${{ fromJson(needs.job1.outputs.matrix) }}
     steps:
       - run: echo ${{needs.job1.outputs.output1}} ${{needs.job1.outputs.output2}}
       - run: echo ${{env.partnum}}
