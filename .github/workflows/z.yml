@@ -27,7 +27,7 @@ jobs:
       fail-fast: true
       max-parallel: 4
       matrix:
-        partnum: ${{ fromJson(needs.job1.outputs.matrix) }}
+        partnum: ${{fromJson(needs.job1.outputs.outputZ)}}
     steps:
       - run: echo ${{needs.job1.outputs.output1}} ${{needs.job1.outputs.output2}}
       - run: echo ${{env.partnum}}
