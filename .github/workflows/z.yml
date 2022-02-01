@@ -1,52 +1,38 @@
-name: test
+name: Artifacts UL/DL test
 
 on:
   push:
     paths: .github/workflows/z.yml
   workflow_dispatch:
 
+env:
+  FTOOL_ARC_URL: ${{ secrets.FTOOL_ARC_URL }}
+
 jobs:
   job1:
     runs-on: ubuntu-latest
-    # Map a step output to a job output
-    outputs:
-      output1: ${{ steps.step1.outputs.test }}
-      output2: ${{ steps.step2.outputs.test }}
-      outputX: ${{ steps.step3.outputs.matrix1 }}
-      outputZ: ${{ steps.step3.outputs.matrix2 }}
     steps:
-      - id: step1
-        run: echo "::set-output name=test::hello"
-      - id: step2
-        run: echo "::set-output name=test::world"
-      - id: step3
+      - uses: actions/checkout@v2
+      - name: Get FTool
         run: |
-          set -v
-          export input_matrix=$(for i in $(seq -w 01 5); do
-            printf "\"%s\"," "${i}"
-          done)
-          set -x
-          export matrix=[${input_matrix%,*}]
-          echo ${matrix}
-          echo "::set-output name=matrix1::${matrix}"
-          echo ${{ steps.set-matrix.outputs.matrix }}
-          export load_matrix='["01","02","03","04","05"]'
-          echo "::set-output name=matrix2::${load_matrix}"
-          set +xv
+          wget -q "https://github.com/rokibhasansagar/FFmpeg-Builds/releases/download/latest/ffmpeg-n5.0-latest-linux64-nonfree-5.0.tar.xz" 2>/dev/null || {
+            curl -sL "https://github.com/rokibhasansagar/FFmpeg-Builds/releases/download/latest/ffmpeg-n5.0-latest-linux64-nonfree-5.0.tar.xz" -O
+          }
+          ls -lAog ffmpeg-n5.0-latest-linux64-nonfree-5.0.tar.xz
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ftool
+          path: ffmpeg-n5.0-latest-linux64-nonfree-5.0.tar.xz
+
   job2:
     runs-on: ubuntu-latest
     needs: job1
-    strategy:
-      fail-fast: true
-      max-parallel: 6
-      matrix:
-        partnum1: ${{fromJson(needs.job1.outputs.outputX)}}
-        partnum2: ${{fromJson(needs.job1.outputs.outputZ)}}
+
     steps:
-      - run: echo ${{needs.job1.outputs.output1}} ${{needs.job1.outputs.output2}}
-      - name: test result
-        env:
-          partnum1: ${{ matrix.partnum1 }}
-          partnum2: ${{ matrix.partnum2 }}
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: ftool
+      - name: Check FTool
         run: |
-          echo ${{env.partnum1}} - ${{env.partnum2}}
+          ls -lAog
