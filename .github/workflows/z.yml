@@ -1,41 +1,71 @@
-name: Artifacts UL/DL test
+name: Advanced workflow_dispatch
 
 on:
-  push:
-    paths: .github/workflows/z.yml
   workflow_dispatch:
+    inputs:
+      GeoCode:
+        description: "GeoCode, NewYork|Shanghai"
+        required: true
+        default: ""
+        type: choice
+        options:
+        - NewYork
+        - Shanghai
+      ChunkNum:
+        description: "ChunkNum, 01..n"
+        required: true
+        default: ""
+        type: number
+      SpeedProf:
+        description: "SpeedProfile, 1/2/3"
+        required: true
+        default: "1"
+        type: choice
+        options:
+        - "1"
+        - 2
+        - 3
+      Resolution:
+        description: "Resolution, 576|450"
+        required: true
+        default: ""
+        type: choice
+        options:
+        - 576
+        - 450
+      Purpose:
+        description: "Purpose, arc|ren"
+        required: true
+        default: "ren"
+        type: choice
+        options:
+        - arc
+        - ren
 
 env:
+  LocationOnIndex: "td:/MiraculouSourcery"
+  Variant: "Special"
+  GeoCode: ${{ github.event.inputs.GeoCode }}
+  SubLocation: "Sp0${{ github.event.inputs.GeoCode }}"
+  InputFilename: "Miraculous.World.${{github.event.inputs.GeoCode}}.1080p.part_${{github.event.inputs.ChunkNum}}.mkv"
+  R3NC0D3R: "AV1"
+  ChunkNum: ${{ github.event.inputs.ChunkNum }}
+  SpeedProf: ${{ github.event.inputs.SpeedProf }}
+  Resolution: ${{ github.event.inputs.Resolution }}
+  Purpose: ${{ github.event.inputs.Purpose }}
+  RCLONE_CONFIG_URL: ${{ secrets.RCLONE_CONFIG_URL }}
+  RCLONE_INSTALL_MIRROR: ${{ secrets.RCLONE_INSTALL_MIRROR }}
   FTOOL_ARC_URL: ${{ secrets.FTOOL_ARC_URL }}
+  FTOOL_CONVERTER: ${{ secrets.FTOOL_CONVERTER }}
+  FTOOL_PROBER: ${{ secrets.FTOOL_PROBER }}
+  PAT: ${{ secrets.GH_TOKEN2 }}
+
 
 jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Get FTool
+      - name: Show ENVs
         run: |
-          cd "$(mktemp -d)"
-          wget -q "${FTOOL_ARC_URL}" || curl -sL "${FTOOL_ARC_URL}" -O
-          tar -xJf ff*.tar.xz --strip-components 1
-          sudo mv bin/* /usr/local/bin/
-          cd -
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ftool
-          path: |
-            /usr/local/bin/ff*
-
-  job2:
-    runs-on: ubuntu-latest
-    needs: job1
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: ftool
-          path: /usr/local/bin/
-      - name: Check FTool
-        run: |
-          ls -lAog /usr/local/bin/ff*
+          printenv | sort
