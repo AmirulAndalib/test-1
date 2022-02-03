@@ -4,9 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       GeoCode:
-        description: "GeoCode, NewYork|Shanghai"
+        description: "GeoCode"
         required: true
-        default: ""
         type: choice
         options:
         - NewYork
@@ -14,33 +13,29 @@ on:
       ChunkNum:
         description: "ChunkNum, 01..n"
         required: true
-        default: ""
         type: number
       SpeedProf:
-        description: "SpeedProfile, 1/2/3"
+        description: "SpeedProfile"
         required: true
-        default: "1"
         type: choice
         options:
         - "1"
-        - 2
-        - 3
+        - "2"
+        - "3"
       Resolution:
-        description: "Resolution, 576|450"
+        description: "Resolution"
         required: true
-        default: ""
         type: choice
         options:
-        - 576
-        - 450
+        - "450"
+        - "576"
       Purpose:
         description: "Purpose, arc|ren"
         required: true
-        default: "ren"
         type: choice
         options:
-        - arc
         - ren
+        - arc
 
 env:
   LocationOnIndex: "td:/MiraculouSourcery"
